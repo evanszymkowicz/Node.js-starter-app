@@ -5,7 +5,7 @@ exports.getTodos = function(req, res) {
     .then(function(todos){
         res.json(todos);
     });
-.catch(function(err) {
+.catch(function(err){
         res.send(err);
     });
 }
