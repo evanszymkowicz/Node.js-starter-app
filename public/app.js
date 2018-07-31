@@ -1,5 +1,9 @@
 //Request relative path for each user///
+<<<<<<< HEAD
 //$ Dollar sign global variable required to satisfy Atom Linter//
+=======
+//$ Dollar sign global variable required for Atom Linter//
+>>>>>>> cfd3f3c6066b98639a8366109e8e0d60c39897da
 $(document).ready(function () {
   $.getJSON('api/todos');
   $.then(addTodos);
