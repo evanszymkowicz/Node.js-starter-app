@@ -1,9 +1,5 @@
 //Request relative path for each user///
-<<<<<<< HEAD
 //$ Dollar sign global variable required to satisfy Atom Linter//
-=======
-//$ Dollar sign global variable required for Atom Linter//
->>>>>>> cfd3f3c6066b98639a8366109e8e0d60c39897da
 $(document).ready(function () {
   $.getJSON('api/todos');
   $.then(addTodos);
@@ -15,19 +11,72 @@ $(document).ready(function () {
   });
 });
 
-function addTodos(todos) {
-  todos.forEach(function (todo) {
-    console.log(todo.name);
-    var $newTodo = $('<li class="task">' + todo.name + '</li>');
-    if (todo.completed) {
-      newTodo.addClass('done');
-    }
+$('.list').on('click', 'li', function(){
+    updateTodo($(this));
+  })
 
-    $('list').append(newTodo);
+$('.list').on('click', 'span', function(e) {
+  e.stopPropagation();
+  removeTodo($(this).parent());
+  });
+})
+
+function addTodos(todos) {
+  //add todos to page here
+  todos.forEach(function(todo){
+    addTodo(todo);
   });
 }
 
-//Cannot use JSON because we are using a GET request//
-function createTodo() {
-  $.post('api/todos');
+function addTodo(todo){
+  var newTodo = $('<li class="task">'+todo.name +' <span>X</span></li>');
+  newTodo.data('id', todo._id);
+  newTodo.data('completed', todo.completed);
+  if(todo.completed){
+    newTodo.addClass("done");
+  }
+  $('.list').append(newTodo);
+}
+
+function createTodo(){
+  //send request to create new todo
+  var usrInput = $('#todoInput').val();
+  $.post('/api/todos',{name: usrInput})
+  .then(function(newTodo){
+    $('#todoInput').val('');
+    addTodo(newTodo);
+  })
+  .catch(function(err){
+    console.log(err);
+  })
+}
+
+function removeTodo(todo){
+  var clickedId = todo.data('id');
+  var deleteUrl = '/api/todos/' + clickedId;
+  $.ajax({
+    method: 'DELETE',
+    url: deleteUrl
+  })
+  .then(function(data){
+    todo.remove();
+  })
+  .catch(function(err){
+    console.log(err);
+  })
+}
+
+function updateTodo(todo){
+  var updateUrl = '/api/todos/' + todo.data('id');
+  var isDone = !todo.data('completed');
+  var updateData = {completed: isDone}
+  $.ajax({
+    method: 'PUT',
+    url: updateUrl,
+    data: updateData
+  })
+  .then(function(updatedTodo){
+    todo.toggleClass("done");
+    todo.data('completed', isDone);
+  })
 }
